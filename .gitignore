@@ -1,0 +1,43 @@
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+build/
+.gradle/
+
+# Logs
+*.log
+logs/
+
+# IDE - IntelliJ IDEA
+.idea/
+*.iml
+
+# IDE - Eclipse
+.project
+.classpath
+.settings/
+.springBeans
+.sts4-cache/
+
+# IDE - VS Code
+.vscode/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Java
+*.class
+
+# Application secrets
+application-local.properties
+application-local.yml
+application-dev.properties
+application-dev.yml
+.env
+
+# Temporary files
+tmp/
+temp/
