@@ -1,5 +1,7 @@
 package com.example.demo.event.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +36,13 @@ public class EventController {
     public ResponseEntity<ApiResponse<EventResponse>> getEventById(@PathVariable Long id) {
         EventResponse eventResponse = eventService.getEventById(id);
         ApiResponse<EventResponse> response = new ApiResponse<>(true, "Event retrieved successfully", eventResponse);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<List<EventResponse>>> getAllEvents() {
+        List<EventResponse> events = eventService.getAllEvents();
+        ApiResponse<List<EventResponse>> response = new ApiResponse<>(true, "Events retrieved successfully", events);
         return ResponseEntity.ok(response);
     }
 }

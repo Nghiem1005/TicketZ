@@ -1,5 +1,7 @@
 package com.example.demo.event.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.example.demo.common.exception.ResourceNotFoundException;
@@ -28,6 +30,12 @@ public class EventServiceImpl implements EventService {
     public EventResponse getEventById(Long id) {
         Event event = eventRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Event not found"));
         return eventMapper.toResponse(event);
+    }
+
+    @Override
+    public List<EventResponse> getAllEvents() {
+        List<Event> events = eventRepository.findAll();
+        return events.stream().map(eventMapper::toResponse).toList();
     }
 
 }
