@@ -7,12 +7,17 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 
 import com.example.demo.common.utils.BaseEntity;
 import com.example.demo.ticket.entity.Ticket;
 import com.example.demo.user.entity.User;
 
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "orders")
 public class Order extends BaseEntity {
