@@ -5,13 +5,13 @@ import java.time.LocalDateTime;
 import jakarta.validation.constraints.NotBlank;
 
 public record CreateEventRequest(
-                @NotBlank String name,
+        @NotBlank String name,
 
-                String description,
+        String description,
 
-                @NotBlank String location,
+        @NotBlank String location,
 
-                @NotBlank LocalDateTime startTime,
+        LocalDateTime startTime,
 
-                @NotBlank LocalDateTime endTime) {
+        LocalDateTime endTime) {
 }
