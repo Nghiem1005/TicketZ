@@ -22,4 +22,11 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
+
+    @ExceptionHandler(TicketSoldOutException.class)
+    public ResponseEntity<ErrorResponse> handleTicketSoldOutException(TicketSoldOutException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
 }

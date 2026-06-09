@@ -2,10 +2,12 @@ package com.example.demo.order.service;
 
 import java.math.BigDecimal;
 
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.common.exception.BadRequestException;
 import com.example.demo.common.exception.ResourceNotFoundException;
+import com.example.demo.common.exception.TicketSoldOutException;
 import com.example.demo.order.dto.request.CreateOrderRequest;
 import com.example.demo.order.dto.response.OrderReponse;
 import com.example.demo.order.entity.Order;
@@ -36,19 +38,18 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found"));
 
         if (ticket.getQuantityAvailable() < request.quantity()) {
-            throw new BadRequestException("Not enough tickets available");
+            throw new TicketSoldOutException("Ticket sold out during purchase process");
         }
 
         // Simulate processing time to increase the chance of overselling in concurrent
         // scenarios
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        // try {
+        // Thread.sleep(100);
+        // } catch (InterruptedException e) {
+        // throw new RuntimeException(e);
+        // }
 
         ticket.setQuantityAvailable(ticket.getQuantityAvailable() - request.quantity());
-        ticketRepository.save(ticket);
 
         BigDecimal totalPrice = ticket.getUnitPrice().multiply(BigDecimal.valueOf(request.quantity()));
 
@@ -63,10 +64,16 @@ public class OrderServiceImpl implements OrderService {
 
         order.setStatus(OrderStatus.PENDING);
 
-        Order savedOrder = orderRepository.save(order);
-        OrderReponse response = orderMapper.toResponse(savedOrder);
+        try {
+            ticketRepository.saveAndFlush(ticket);
+            Order savedOrder = orderRepository.save(order);
+            OrderReponse response = orderMapper.toResponse(savedOrder);
+            return response;
+        } catch (ObjectOptimisticLockingFailureException e) {
+            System.out.println("OPTIMISTIC LOCK DETECTED");
+            throw new TicketSoldOutException("Ticket sold out during purchase process");
+        }
 
-        return response;
     }
 
 }
