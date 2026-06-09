@@ -5,10 +5,9 @@ import java.math.BigDecimal;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.common.exception.BadRequestException;
+import com.example.demo.common.event.TicketReservedEvent;
 import com.example.demo.common.exception.ResourceNotFoundException;
 import com.example.demo.common.exception.TicketSoldOutException;
-import com.example.demo.order.dto.request.CreateOrderRequest;
 import com.example.demo.order.dto.response.OrderReponse;
 import com.example.demo.order.entity.Order;
 import com.example.demo.order.entity.OrderStatus;
@@ -33,21 +32,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderReponse purchase(CreateOrderRequest request) {
+    public OrderReponse purchase(TicketReservedEvent request) {
         Ticket ticket = ticketRepository.findById(request.ticketId())
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found"));
-
-        if (ticket.getQuantityAvailable() < request.quantity()) {
-            throw new TicketSoldOutException("Ticket sold out during purchase process");
-        }
-
-        // Simulate processing time to increase the chance of overselling in concurrent
-        // scenarios
-        // try {
-        // Thread.sleep(100);
-        // } catch (InterruptedException e) {
-        // throw new RuntimeException(e);
-        // }
 
         ticket.setQuantityAvailable(ticket.getQuantityAvailable() - request.quantity());
 
