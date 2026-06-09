@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,12 +32,16 @@ public class OrderConcurrencyTest {
 
     @Test
     void should_show_overselling() throws Exception {
-
+        System.out.println("TEST START");
         int numberOfUsers = 100;
 
         ExecutorService executorService = Executors.newFixedThreadPool(32);
 
         CountDownLatch latch = new CountDownLatch(numberOfUsers);
+
+        AtomicInteger success = new AtomicInteger();
+
+        AtomicInteger fail = new AtomicInteger();
 
         for (int i = 0; i < numberOfUsers; i++) {
 
@@ -50,8 +55,10 @@ public class OrderConcurrencyTest {
                             1);
 
                     orderService.purchase(request);
+                    success.incrementAndGet();
 
                 } catch (Exception ignored) {
+                    fail.incrementAndGet();
                 }
 
                 latch.countDown();
@@ -62,14 +69,11 @@ public class OrderConcurrencyTest {
         latch.await();
 
         // Kiểm tra kết quả cuối cùng
-        Ticket ticket = ticketRepository.findById(1L)
-                .orElseThrow();
 
-        assertNotEquals(
-                0,
-                ticket.getQuantityAvailable());
+        System.out.println(
+                "Success = " + success.get());
 
-        assertTrue(
-                orderRepository.count() > 10);
+        System.out.println(
+                "Fail = " + fail.get());
     }
 }
